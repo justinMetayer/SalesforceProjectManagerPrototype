@@ -1,0 +1,76 @@
+@isTest
+public class ProjectTaskTriggerTest {
+	@isTest
+    public static void testBeforeIsUpdateEndDate(){
+        Account account = new Account(Name = 'Test');
+        Contact projectManager = new Contact(LastName = 'Test contact');
+        
+    	Project__c projet = new Project__c();
+    	projet.Name = 'Test project for testTrigger';
+        Projet.Description__c = 'Test trigger';
+        
+        Project_Task__c projectTask = new Project_Task__c();
+        projectTask.Name = 'TEST';
+        projectTask.Number_of_billable_days__c = 1.00;
+        projectTask.Number_of_days_used__c = 1.00;
+        projectTask.Status__c = 'Opened';
+        projectTask.Price__c = 1.00;
+        
+        Test.startTest();
+        
+        insert account;
+        insert projectManager;
+        projet.Customer__c = account.Id;
+        projet.Project_Manager__c = projectManager.Id;
+        insert projet;
+        projectTask.Project__c = projet.Id;
+        insert projectTask;
+        
+        projectTask.Status__c = 'Closed';
+        Database.SaveResult result = Database.update(projectTask);
+   
+        Project_Task__c resultSet = [SELECT End_Date__c FROM Project_Task__c WHERE Id = :projectTask.Id];
+        
+        Test.stopTest();
+        
+        System.assert(result.isSuccess());
+        System.assertEquals(date.today(), resultSet.End_Date__c);
+    }
+    
+   	@isTest
+    public static void testBeforeIsUpdateCloseByUser(){
+        Account account = new Account(Name = 'Test');
+        Contact projectManager = new Contact(LastName = 'Test contact');
+        
+    	Project__c projet = new Project__c();
+    	projet.Name = 'Test project for testTrigger';
+        Projet.Description__c = 'Test trigger';
+        
+        Project_Task__c projectTask = new Project_Task__c();
+        projectTask.Name = 'TEST';
+        projectTask.Number_of_billable_days__c = 1.00;
+        projectTask.Number_of_days_used__c = 1.00;
+        projectTask.Status__c = 'Opened';
+        projectTask.Price__c = 1.00;
+        
+        Test.startTest();
+        
+        insert account;
+        insert projectManager;
+        projet.Customer__c = account.Id;
+        projet.Project_Manager__c = projectManager.Id;
+        insert projet;
+        projectTask.Project__c = projet.Id;
+        insert projectTask;
+        
+        projectTask.Status__c = 'Closed';
+        Database.SaveResult result = Database.update(projectTask);
+   
+        Project_Task__c resultSet = [SELECT Close_by__c FROM Project_Task__c WHERE Id = :projectTask.Id];
+        
+        Test.stopTest();
+        
+        System.assert(result.isSuccess());
+        System.assertEquals(UserInfo.getUserId(), resultSet.Close_by__c);
+    }
+}

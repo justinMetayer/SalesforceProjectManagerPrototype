@@ -1,0 +1,19 @@
+public class ProjectTaskController {
+    /*-- Constantes --*/
+    public static final Integer ROW_LIMIT = 20;
+    
+    /**
+     * Function : getProjectTaskClosed
+     * Params : None
+     * Return : List<Project_Task__c>
+     * Def : Returns the last closed project tasks
+     */ 
+	@AuraEnabled
+    public static List<Project_Task__c> getProjectTaskClosed(){
+       	return [SELECT Name, Price__c, Project__r.Name, End_Date__c, Close_by__r.Name, Close_by__r.SmallPhotoUrl, Close_description__c 
+                FROM Project_Task__c 
+                WHERE Status__c = 'Closed' 
+                ORDER BY End_Date__c DESC
+                LIMIT :ROW_LIMIT];
+    }
+}

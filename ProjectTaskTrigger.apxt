@@ -1,0 +1,30 @@
+trigger ProjectTaskTrigger on Project_Task__c (before insert, before update, before delete, after insert, after update, after delete) {
+    
+    if(Trigger.isBefore){
+    	/*-- Before process --*/
+        if(Trigger.isInsert){
+            
+        }
+        else if(Trigger.isUpdate){
+            //Set end date function
+            ProjectTaskTriggerClass.checkEndDate(Trigger.New);
+            //Set user closed task
+            ProjectTaskTriggerClass.setCloseUser(Trigger.OldMap, Trigger.NewMap);
+        }
+        else{
+            
+        }
+    }
+    else{
+        /*-- After process --*/
+        if(Trigger.isInsert){
+            
+        }
+        else if(Trigger.isUpdate){
+            
+        }
+        else{
+            
+        }
+    }
+}

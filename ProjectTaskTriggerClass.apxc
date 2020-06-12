@@ -1,0 +1,34 @@
+public class ProjectTaskTriggerClass {
+    /*-- Constantes --*/
+    public final static String STATUS_CLOSED = 'Closed';
+    
+    /**
+     * Function : checkEndDate
+     * Params : projectTasks (List<Project_Task__c>)
+     * Return : Null
+     * Def : Allows you to set a project end date, if the status is closed and the end date is not set or lower than the creation date.
+     */
+    public static void checkEndDate(List<Project_Task__c> projectTasks){       
+        for(Project_Task__c projectTask : projectTasks){            
+            if(projectTask.Status__c == STATUS_CLOSED && (projectTask.End_Date__c == null || projectTask.End_Date__c < projectTask.CreatedDate)){
+                projectTask.End_Date__c = date.today();
+            }
+        }
+        
+        System.debug('checkEndDate : '+projectTasks);
+    }
+    
+    /**
+     * Function : setCloseUser
+     * Params : oldProjectTasks (Map<Id,Project_Task__c>), newProjectTasks (Map<Id,Project_Task__c>)
+     * Return : Null
+     * Def : Puts the user who closed the task.
+     */ 
+    public static void setCloseUser(Map<Id,Project_Task__c> oldProjectTasks, Map<Id,Project_Task__c> newProjectTasks ){
+        for(Id projectTaskId : newProjectTasks.keySet()){
+            if(newProjectTasks.get(projectTaskId).Status__c != oldProjectTasks.get(projectTaskId).Status__c && newProjectTasks.get(projectTaskId).Status__c == STATUS_CLOSED){
+                newProjectTasks.get(projectTaskId).Close_by__c = UserInfo.getUserId();
+            }
+        }
+    }
+}
